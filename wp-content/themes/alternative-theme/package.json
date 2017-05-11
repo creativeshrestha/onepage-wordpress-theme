@@ -1,0 +1,32 @@
+{
+  "name": "kickstarter",
+  "version": "1.0.0",
+  "description": "Kickstarter project npm manager",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "*"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.3",
+    "browser-sync": "*",
+    "gulp": "*",
+    "gulp-css-flipper": "*",
+    "gulp-filter": "*",
+    "gulp-notify": "*",
+    "gulp-plumber": "*",
+    "gulp-postcss": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "lost": "^6.7.2",
+    "precss": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Kickstarter"
+  ],
+  "author": "Nitesh Shrestha (creativeshrestha@gmail.com)",
+  "license": "MTE"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "OffCanvasMenuEffects",
+  "homepage": "https://github.com/codrops/OffCanvasMenuEffects",
+  "_release": "f6d9ef2ce7",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f6d9ef2ce7f45c86244b6ff56643ed66f71a2d57"
+  },
+  "_source": "https://github.com/codrops/OffCanvasMenuEffects.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/codrops/OffCanvasMenuEffects.git"
+}

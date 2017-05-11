@@ -1,0 +1,37 @@
+/* 
+
+// =============================================================================
+// File: synchi_widget.css
+// Version: 1.0
+// 
+// Defines Synchi Widget styles
+// ============================================================================
+
+*/
+
+.CodeMirror-wrap {
+    border: 1px solid #CCC;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+}
+
+.synchi_widget_controls {
+    width: 100%;
+    text-align: right;
+}
+
+.synchi_full_screen {
+    position:fixed !important;
+    top: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    bottom: 0px !important;
+    z-index:1000 !important;
+    margin: 0 !important;
+    background-color: whiteSmoke;
+    padding: 10px;
+}
+
+.synchi_full_screen .CodeMirror {
+    /*height: 100% !important;*/
+}

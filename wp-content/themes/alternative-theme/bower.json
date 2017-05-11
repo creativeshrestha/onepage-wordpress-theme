@@ -1,0 +1,39 @@
+{
+  "name": "Kickstarter Projects",
+  "authors": [
+    "Nitesh Shrestha <creativeshrestha@gmai.com>"
+  ],
+  "description": "Project bootstrap for web development",
+  "main": "bower.json",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "homepage": "index.php",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "font-awesome": "fontawesome#~4.5.0",
+    "owl.carousel": "OwlCarousel2#~2.0.0-beta.3",
+    "animate.css": "~3.5.1",
+    "select2": "~4.0.1",
+    "Materialize": "materialize#~0.97.5",
+    "normalize-css": "normalize.css#~3.0.3",
+    "OffCanvasMenuEffects": "https://github.com/codrops/OffCanvasMenuEffects.git",
+    "animsition": "https://github.com/blivesta/animsition.git#~4.0.1",
+    "fancyBox": "https://github.com/fancyapps/fancyBox.git#~2.1.5",
+    "typi": "~1.1.0"
+  },
+  "devDependencies": {
+    "ihover": "^1.0.0",
+    "matchHeight": "jquery-match-height#^0.7.0",
+    "flexslider": "FlexSlider#^2.6.0"
+  }
+}
