@@ -92,7 +92,41 @@ function help_page(){
 							<br>
 
 						</p>
-						<h2 style="margin-top: 0;">How to Update existing widget area? [New]</h2>	
+						<h2 style="margin-top: 0;">How to add custom wrapper tag? [New]</h2>	
+						<p>
+							<ol class="list">
+								<li><h4>Click on custom link. </h4>
+									<br>
+									<img src="<?php echo $plugin_url;?>/admin/img/help/cwa_widget_advanced_1.png">
+								</li>
+								<li><h4>Enter a valid Json object array </h4>
+									<p>
+										i.e:
+										<code>
+											[{
+												"tag": "div",
+												"id" : "outer-widget",
+												"class" : "outer-class"
+											},
+											{
+												"tag": "div",
+												"id" : "inner-widget",
+												"class" : "inner-class"
+											}]
+										</code><br>
+									</p>
+
+									<img src="<?php echo $plugin_url;?>/admin/img/help/cwa_widget_advanced_2.png">
+								</li>
+								
+								<li>
+									<h4>Then submit a changes by clicking update button. </h4>
+									
+								</li>
+							</ol>
+						</p>
+
+						<h2 style="margin-top: 0;">How to Update existing widget area? </h2>	
 						<p>
 							<ol class="list">
 								<li><h4>Click on the edit link. </h4>
@@ -109,6 +143,7 @@ function help_page(){
 								</li>
 							</ol>
 						</p>
+
 					</div>
 				  </div>
 				  <div id="custom-menu-location">

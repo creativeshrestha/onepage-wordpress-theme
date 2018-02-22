@@ -131,7 +131,8 @@ class Menu_view
 	}
 
 	public function getMenuData(){
-		global $wpdb, $table_name;
+		global $wpdb;
+		$table_name = TABLE_NAME;
 
 		$sql = "SELECT * FROM $table_name WHERE cwa_type='menu'";
 

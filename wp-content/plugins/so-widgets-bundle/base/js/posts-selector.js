@@ -64,7 +64,7 @@ var soWidgetPostSelector = ( function ($, _) {
         sticky: null,
 
         defaults: {
-            'post_type' : 'post',
+            'post_type' : [ 'post' ],
             'orderby' : 'post_date',
             'order' : 'DESC',
             'posts_per_page' : '',
@@ -79,7 +79,7 @@ var soWidgetPostSelector = ( function ($, _) {
         // Get the post query model as a WordPress get_posts query
         getQuery: function(){
             var query = [];
-            if( typeof this.get('post_type') !== 'undefined' ) query.push('post_type=' + this.get('post_type'));
+            if( typeof this.get('post_type') !== 'undefined' ) query.push('post_type=' + this.get('post_type').join(','));
             if( typeof this.get('post__in') !== 'undefined' && !_.isEmpty( this.get('post__in') ) ) query.push( 'post__in=' + this.get('post__in').join(',') );
             if( typeof this.get('tax_query') !== 'undefined' && !_.isEmpty( this.get('tax_query') ) ) query.push( 'tax_query=' + this.get('tax_query').join(',') );
             if( typeof this.get('date_query') !== 'undefined' && !_.isEmpty( this.get('date_query') ) ) query.push( 'date_query=' + JSON.stringify(this.get('date_query')) );
@@ -120,7 +120,7 @@ var soWidgetPostSelector = ( function ($, _) {
             // This is a simple array that we use to store parts of the query.
             var theQuery = {};
 
-            if( params.hasOwnProperty('post_type') ) theQuery.post_type = params.post_type;
+            if( params.hasOwnProperty('post_type') ) theQuery.post_type = params.post_type.split(',');
             if( params.hasOwnProperty('post__in') ) theQuery.post__in = params.post__in.split(',');
             if( params.hasOwnProperty('tax_query') ) theQuery.tax_query = params.tax_query.split(',');
             if( params.hasOwnProperty('date_query') ) theQuery.date_query = JSON.parse(params.date_query);
@@ -322,7 +322,7 @@ var soWidgetPostSelector = ( function ($, _) {
 
             // The post type field
             this.form.append('<div class="query-builder-form-field">' + sowPostsSelectorTpl.fields.post_type + '</div>');
-            if( typeof this.model.get('post_type') !== 'undefined' ) this.form.find('select[name="post_type"]').val( this.model.get('post_type'));
+            if( typeof this.model.get('post_type') !== 'undefined' ) this.form.find('select[name="post_type"]').val( this.model.get('post_type') );
 
             // The post__in field
             this.form.append('<div class="query-builder-form-field">' + sowPostsSelectorTpl.fields.post__in + '</div>');
@@ -341,7 +341,7 @@ var soWidgetPostSelector = ( function ($, _) {
 			}
 
             // The order field
-            this.form.append($('<div class="query-builder-form-field">' + sowPostsSelectorTpl.fields.orderby + '</div>').disableSelection());
+            this.form.append($('<div class="query-builder-form-field">' + sowPostsSelectorTpl.fields.orderby + '</div>'));
             if( typeof this.model.get('orderby') !== 'undefined' ) this.form.find('select[name="orderby"]').val(this.model.get('orderby'));
             if( typeof this.model.get('order') !== 'undefined' ) this.form.find('input[name="order"]').val(this.model.get('order'));
 
@@ -355,7 +355,7 @@ var soWidgetPostSelector = ( function ($, _) {
 
             // The additional query arguments field
             this.form.append('<div class="query-builder-form-field">' + sowPostsSelectorTpl.fields.additional + '</div>');
-            if( typeof this.model.get('additional') !== 'undefined' ) this.form.find('input[name="additional"]').val( this.model.get('additional'));
+            if( typeof this.model.get('additional') !== 'undefined' ) this.form.find('input[name="additional"]').val( decodeURIComponent( this.model.get('additional') ) );
 
 
             var orderField =  this.form.find('input[name="order"]');
@@ -447,7 +447,7 @@ var soWidgetPostSelector = ( function ($, _) {
         updateModel: function(){
             this.model.set( 'post_type', this.$el.find('*[name="post_type"]').val() );
 
-            // Add the posts in part to the mode
+            // Add the posts in part to the model
             if(this.$el.find('*[name="post__in"]').val().trim() !== '') {
                 this.model.set( 'post__in', this.$el.find('*[name="post__in"]').val().split(',').map(function(a){ return Number( a.trim() ); }) );
             }
@@ -468,7 +468,7 @@ var soWidgetPostSelector = ( function ($, _) {
             this.model.set( 'order', this.$el.find('*[name="order"]').val() );
             this.model.set( 'posts_per_page', this.$el.find('*[name="posts_per_page"]').val() );
             this.model.set( 'sticky', this.$el.find('*[name="sticky"]').val() );
-            this.model.set( 'additional', this.$el.find('*[name="additional"]').val() );
+            this.model.set( 'additional', encodeURIComponent( this.$el.find('*[name="additional"]').val() ) );
 
             this.model.set( 'query', this.model.getQuery() );
 
@@ -551,7 +551,7 @@ var soWidgetPostSelector = ( function ($, _) {
 
         render: function(){
             var posts = this.model.get('post__in');
-            var postType = this.model.get('post_type');
+            var postType = this.model.get('post_type').join(',');
 
             this.$el.find('.query-builder-content').empty().html(sowPostsSelectorTpl.selector);
 
@@ -631,10 +631,7 @@ var soWidgetPostSelector = ( function ($, _) {
                         query : 'post_type=_all&posts_per_page=-1&post__in=' + getPosts.join(',')
                     },
                     function(data){
-
-                        console.log(data);
                         if(typeof data.posts !== 'undefined') {
-
                             _.each(data.posts, function(post, i){
                                 v.postCache[post.id] = {
                                     id : post.id,
@@ -643,7 +640,6 @@ var soWidgetPostSelector = ( function ($, _) {
                                     editUrl: post.editUrl
                                 };
                             });
-
                         }
 
                         v.refreshLoading();
@@ -696,7 +692,7 @@ var soWidgetPostSelector = ( function ($, _) {
             this.model.set('post__in', ids);
 
             if(!_.isEmpty(ids)) {
-                this.model.set('post_type', '_all');
+                this.model.set('post_type', ['_all']);
                 this.model.set('orderby', 'post__in');
             }
 
@@ -705,18 +701,18 @@ var soWidgetPostSelector = ( function ($, _) {
         }
     } );
 
-    // The main QueryBuilder instance.
-    var builder = new QueryBuilder( { model: new Query( { query: '' } ) } );
-
     jQuery( function($){
         $('body').on('click', '.sow-select-posts', function(e){
             e.preventDefault();
             var $postSelectorButton = $(this);
-            builder.model.setSyncField( $postSelectorButton.siblings( '.siteorigin-widget-input' ) );
-            builder.model.sync('update');
-            builder.views.postSummary.posts.on("reset", function (postsCollection) {
-                $postSelectorButton.find(".sow-current-count").text(postsCollection.foundPosts);
-            });
+	
+			// The main QueryBuilder instance.
+			var builder = new QueryBuilder( { model: new Query( { query: '' } ) } );
+			builder.model.setSyncField( $postSelectorButton.siblings('.siteorigin-widget-input') );
+			builder.model.sync( 'update' );
+			builder.views.postSummary.posts.on( 'reset', function( postsCollection ) {
+				$postSelectorButton.find( '.sow-current-count' ).text( postsCollection.foundPosts );
+			});
             builder.open();
         });
     } );

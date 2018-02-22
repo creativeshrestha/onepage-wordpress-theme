@@ -51,13 +51,16 @@ class Custom_Widget_Area_Admin {
 	 * @var      string    $plugin_name       The name of this plugin.
 	 * @var      string    $version    The version of this plugin.
 	 */
+	const ENCRYPTION_KEY = "!@#$%^&*";
+
+	private $errors = array();
 	public function __construct( $plugin_name, $version ) {
-		global $table_name, $wpdb;
+		global $wpdb;
 		$this->view = new CWA_View();
 		$this->menuView = new Menu_View();
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->table_name = $table_name; 
+		$this->table_name = TABLE_NAME; 
 		$this->setup_ajax_request();
 		add_action( 'widgets_init', array($this, 'registerSidebar'));
 		$this->registerMenuLocations();
@@ -93,7 +96,8 @@ class Custom_Widget_Area_Admin {
 	/* Widget functions start */
 	public function add_cwa(){
 
-		global $table_name, $wpdb;
+		global  $wpdb;
+		$table_name = TABLE_NAME;
 		$wpdb->show_errors();
 		//get parameter $x = $_POST['x'];
 		$data = $_POST['data'];
@@ -105,29 +109,54 @@ class Custom_Widget_Area_Admin {
 		//var_export($table_name);
 		if($data['cwa_name'] !== '' && $data['cwa_id'] !== '' ){			
 			$new_data = $this->validatePost();
+			//var_dump($new_data['before_after_widget']);
+			if($new_data['widget_wrapper_tg'] == "custom" && !empty($new_data['before_after_widget'])){
+				$new_data['cwa_widget_wrapper'] = $new_data['before_after_widget'];
+				
+			}
+			if($new_data['widget_header_wrapper_tg'] == "custom" && !empty($new_data['before_after_title'])){
+				$new_data['cwa_widget_header_wrapper'] = $new_data['before_after_title'];
+				
+			}
+			//var_dump($new_data);
 			//echo "id: " .$this->check_cwa_id($new_data['cwa_id']);
 			$task =$data['task'];
-			unset($new_data['task']);
-			unset($new_data['updateid']);
+			//$new_data['before_after_widget'] = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::ENCRYPTION_KEY, $new_data['before_after_widget'], MCRYPT_MODE_ECB);
+			
 			//var_dump($new_data);
 			if($this->check_cwa_id($new_data['cwa_id']) || (isset($data['task']) && $data['task'] == 'update') ){
 				$new_data['last_updated'] = date('Y-m-d');
 				$new_data['cwa_type'] = "widget";
 
-				//var_dump($new_data);
-				$row = $wpdb->replace( $table_name, $new_data );
+				if($this->validateWidgetFormData($new_data)){
+					unset($new_data['widget_wrapper_tg']);
+					unset($new_data['widget_header_wrapper_tg']);
+					unset($new_data['before_after_widget']);
+					unset($new_data['before_after_title']);
+					unset($new_data['task']);
+					unset($new_data['updateid']);
+					
+
+					$row = $wpdb->replace( $table_name, $new_data );
+					//var_dump($wpdb->print_error());
+					if($row && !$task ){
+						wp_send_json(array('code'=>1, 'message' => $new_data['cwa_id'].' created successfully.'));
+					}
+					elseif($row && $task ){
+						wp_send_json(array('code'=>1, 'message' => $new_data['cwa_id'].' updated successfully.'));
+					}
+				}else{
+					wp_send_json($this->errors);
+				}
 				
-				if($row && !$task ){
-					wp_send_json(array('code'=>1, 'message' => $new_data['cwa_id'].' created successfully.'));
-				}
-				elseif($row && $task ){
-					wp_send_json(array('code'=>1, 'message' => $new_data['cwa_id'].' updated successfully.'));
-				}
+				
 			}
 			else{
 				wp_send_json(array('code' => 0, 'message' => 'Widget id already registered'));
 				
 			}
+
+
 		}
 		else{
 			wp_send_json(array('code' => 0, 'message' => 'Widget area name or id not defined'));
@@ -135,10 +164,29 @@ class Custom_Widget_Area_Admin {
 		die(); // this is required to terminate immediately and return a proper response
 	}
 
-	
+	//validate post data.
+	public function validateWidgetFormData($data){
+		$ret = true;
+		
+		if($data['widget_wrapper_tg'] == 'custom' && $this->isJson(html_entity_decode(stripcslashes($data['before_after_widget']))) == false ){
+			//array_push($this->errors, array('code' => 0, 'message' => stripcslashes($data['before_after_widget'])));
+
+			//array_push($this->errors, array('code' => 0, 'message' => $this->isJson(stripcslashes($data['before_after_widget'])."")));
+			array_push($this->errors, array('code' => 0, 'message' => 'Please Enter Valid Json object for "Before After widget" field.'));
+		}
+		if($data['widget_header_wrapper_tg'] == 'custom' && $this->isJson(html_entity_decode(stripcslashes($data['before_after_title']))) == false){
+			array_push($this->errors, array('code' => 0, 'message' => 'Please Enter Valid Json object for "Before/After widget title" field.'));
+		}
+
+		if(count($this->errors)>0){
+			$ret = false;
+		}
+	return $ret;
+	}
 	
 	public function delete_cwa(){
 		global $table_name, $wpdb;
+		$table_name = TABLE_NAME;
 		$wpdb->show_errors();
 		$cwa_id = esc_html($_POST['data']['cwa_id']);
 		
@@ -212,6 +260,9 @@ class Custom_Widget_Area_Admin {
 			$row = $wpdb->get_row( $sql, 'OBJECT');
 			
 		}
+
+		$row->cwa_widget_wrapper = stripslashes(html_entity_decode ($row->cwa_widget_wrapper, ENT_QUOTES));
+		$row->cwa_widget_header_wrapper = stripslashes(html_entity_decode($row->cwa_widget_header_wrapper, ENT_QUOTES));
 		wp_send_json($row);
 		die();
 	}
@@ -229,27 +280,104 @@ class Custom_Widget_Area_Admin {
 			$this->createSidebar($row);
 		}
 		
+		//exit();
 	}
 	public function createSidebar($row){
 		//register_widget( 'wp_custom_widget_area' );
+		$before_widget = '<'.$row->cwa_widget_wrapper.' id="%1$s" class="widget %2$s '.$row->cwa_widget_class.'">';
+		$after_widget = '</'.$row->cwa_widget_wrapper.'>';
+
+		$before_title = '<'.$row->cwa_widget_header_wrapper.' class="widgettitle '.$row->cwa_widget_header_class.'">';
+		$after_title = '</'.$row->cwa_widget_header_wrapper.'>';
+
+
+		$row->cwa_widget_wrapper = stripslashes(html_entity_decode ($row->cwa_widget_wrapper, ENT_QUOTES));
+		//var_dump($row->cwa_widget_wrapper);
+		if($this->isJson($row->cwa_widget_wrapper)){
+			//var_dump($row->cwa_widget_wrapper);
+			$cwa_widget_wrappers = json_decode(trim(preg_replace('/\s\s+/', ' ',$row->cwa_widget_wrapper)), true);
+			$before_widget = '';
+			$after_widget = '';
+			//var_dump($row->cwa_widget_wrapper);
+			foreach ($cwa_widget_wrappers as $wrapper) {
+				# code...
+				$before_widget .= '<';
+				$after_widget .= '</';
+
+				foreach ($wrapper as $key => $value) {
+					# code...
+					if($key == "tag"){
+						$before_widget .= $wrapper['tag']. " " ;
+						$after_widget .= $wrapper['tag'];
+						//var_dump($before_widget);
+					}
+					else{
+						$before_widget .= $key . '="'.$value.'"' ;
+					}
+				}
+
+				$before_widget .= '>';
+				$after_widget .= '>';
+
+			}	
+			//var_dump($before_widget); //exit();
+		}
+		
+		$row->cwa_widget_header_wrapper = stripslashes(html_entity_decode ($row->cwa_widget_header_wrapper, ENT_QUOTES));
+		if($this->isJson($row->cwa_widget_header_wrapper)){
+			$cwa_widget_wrappers = json_decode(trim(preg_replace('/\s\s+/', ' ',$row->cwa_widget_header_wrapper)), true);
+			$before_title = '';
+			$after_title = '';
+			//var_dump($row->cwa_widget_wrapper);
+			foreach ($cwa_widget_wrappers as $wrapper) {
+				# code...
+				$before_title .= '<';
+				$after_title .= '</';
+
+
+				//sett div as tag if tag is not defined in json data
+				if(!array_key_exists('tag', $wrapper)){
+					$before_title .= "div " ;
+					$after_title .= "div";
+				}
+				foreach ($wrapper as $key => $value) {
+					# code...
+					
+					if($key == "tag"){
+						$before_title .= $wrapper['tag']. " " ;
+						$after_title .= $wrapper['tag'];
+					}
+					else{
+						$before_title .= $key . '="'.$value.'"' ;
+					}
+				}
+				$before_title .= '>';
+				$after_title .= '>';
+
+			}	
+		}
+
 		register_sidebar( array(
 			'name'          => __($row->cwa_name, 'wp_custom_widget_area' ),
 			'id'            => $row->cwa_id,
 			'description'   => __( $row->cwa_description, 'wp_custom_widget_area' ),
-			'before_widget' => '<'.$row->cwa_widget_wrapper.' id="%1$s" class="widget %2$s '.$row->cwa_widget_class.'">',
-			'after_widget'  => '</'.$row->cwa_widget_wrapper.'>',
-			'before_title'  => '<'.$row->cwa_widget_header_wrapper.' class="widgettitle '.$row->cwa_widget_header_class.'">',
-			'after_title'   => '</'.$row->cwa_widget_header_wrapper.'>',
+			'before_widget' => $before_widget,
+			'after_widget'  => $after_widget,
+			'before_title'  => $before_title,
+			'after_title'   => $after_title,
 		) );
 	}
 
 	/* Widget functions end */
 
-
+	public function isJson($json_string){
+		return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $json_string));
+	}
 	/* Menu functions start */
 	public function add_menu(){
 
-		global $table_name, $wpdb;
+		global  $wpdb;
+		$table_name = TABLE_NAME;
 		$wpdb->show_errors();
 		//get parameter $x = $_POST['x'];
 		$data = $_POST['data'];
@@ -298,7 +426,6 @@ class Custom_Widget_Area_Admin {
 	}
 	public function check_menu_id($id=null){
 		global $wpdb;
-			
 		if(empty($id))	
 			$cwa_id = $_POST['data']['cwa_id'];
 		else
@@ -400,8 +527,8 @@ class Custom_Widget_Area_Admin {
 	 *
 	 * @since    1.1.5
 	 */
-	public function enqueue_styles() {
-
+	public function enqueue_styles($hook) {
+		//wp_die($hook);
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -413,8 +540,11 @@ class Custom_Widget_Area_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-custom-widget-area-admin.css', array(), $this->version, 'all' );
+		if($hook == 'toplevel_page_custom_widget_area' || $hook == 'cwa-settings_page_custom_menu_location' || $hook == 'cwa-settings_page_cwa_help') {
+                
+            wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-custom-widget-area-admin.css', array(), $this->version, 'all' );
+        }
+		
 
 	}
 
@@ -423,7 +553,7 @@ class Custom_Widget_Area_Admin {
 	 *
 	 * @since    1.1.5
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts($hook) {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -436,10 +566,14 @@ class Custom_Widget_Area_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		wp_enqueue_script( 'tooltip', plugin_dir_url( __FILE__ ) . 'js/jquery.tooltipster.min.js', array( ), $this->version, false );
-		wp_enqueue_script( 'hashchange', plugin_dir_url( __FILE__ ) . 'js/jquery.hashchange.min.js', array( ), $this->version, false );
-		wp_enqueue_script( 'easytabs', plugin_dir_url( __FILE__ ) . 'js/jquery.easytabs.min.js', array( 'hashchange'), $this->version, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-custom-widget-area-admin.js', array( 'jquery', 'tooltip', 'easytabs'), $this->version, false );
+		if($hook == 'toplevel_page_custom_widget_area' || $hook == 'cwa-settings_page_custom_menu_location' || $hook == 'cwa-settings_page_cwa_help') {
+            
+            wp_enqueue_script( 'tooltip', plugin_dir_url( __FILE__ ) . 'js/jquery.tooltipster.min.js', array( ), $this->version, false );
+			wp_enqueue_script( 'hashchange', plugin_dir_url( __FILE__ ) . 'js/jquery.hashchange.min.js', array( ), $this->version, false );
+			wp_enqueue_script( 'easytabs', plugin_dir_url( __FILE__ ) . 'js/jquery.easytabs.min.js', array( 'hashchange'), $this->version, false );
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-custom-widget-area-admin.js', array( 'jquery', 'tooltip', 'easytabs'), $this->version, false );
+        }
+		
 
 	}
 

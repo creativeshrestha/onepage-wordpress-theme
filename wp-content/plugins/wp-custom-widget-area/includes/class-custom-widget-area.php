@@ -69,7 +69,7 @@ class Custom_Widget_Area {
 	public function __construct() {
 
 		$this->plugin_name = 'wp-custom-widget-area';
-		$this->version = '1.1.5';
+		$this->version = KZ_DB_VERSION;
 
 		$this->load_dependencies();
 		$this->set_locale();

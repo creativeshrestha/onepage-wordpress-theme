@@ -3021,7 +3021,7 @@ var Content_Item = {
 			ret = ( 'source' === mode ) ? this.get_attribute('permalink') : '';
 		}
 		// Format
-		ret = ret.replace('&amp;', '&');
+		ret = ret.replace(/&(#38|amp);/, '&');
 		return ret;
 	},
 	
@@ -3070,7 +3070,7 @@ var Content_Item = {
 			
 			// Element text
 			if ( !title ) {
-				title = dom.text();
+				title = dom.get(0).innerText.trim();
 			}
 		}
 		

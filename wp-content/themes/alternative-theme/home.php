@@ -15,9 +15,7 @@ get_header(); ?>
 				<div class="container">
 
 						<div class="heading-title" data-0="transform: translateY(-5%);" data-end="transform: translateY(700px);">
-								<h1>we believe, you can change the world <br/>
-								when you look beyond the obvious<br/>
-								and think beyond the ordinary.</h1>
+								<h1>I'm UX UI Designer expertise in Designing, Animation, User Interface, App Design, Mobile App Design, Visualisation, Infographic Design, HTML5, CSS, and WordPress</h1>
 						</div>
 
 				</div>

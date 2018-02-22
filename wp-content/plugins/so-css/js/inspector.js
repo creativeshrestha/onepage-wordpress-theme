@@ -9,6 +9,27 @@
         view : { },
         fn : {}
     };
+    
+    var getSelectorSpecificity = function(selector, useParts) {
+        var specificities = [];
+        var ruleSpecificity = SPECIFICITY.calculate( selector );
+        for (var i = 0; i < ruleSpecificity.length; i++) {
+            var specificity = ruleSpecificity[ i ];
+            if ( useParts ) {
+                for ( var j = 0; j < specificity.parts.length; j++ ) {
+                    var specificityPart = specificity.parts[ j ];
+                    // Recursive call to add specificities for parts.
+                    specificities = specificities.concat(getSelectorSpecificity(specificityPart.selector));
+                }
+            } else {
+                specificities.push({
+                    'selector': specificity.selector.trim(),
+                    'specificity': parseInt(specificity.specificity.replace(/,/g, ''))
+                });
+            }
+        }
+        return specificities;
+    };
 
     /**
      * This is the main view for the app
@@ -161,9 +182,9 @@
 
             var container = this.$('.socss-selectors-window').empty();
 
-            _.each( selectors, function(selector){
+            _.each( selectors, function( selector ){
                 container.append(
-                    $( thisView.selectorTemplate(selector) )
+                    $( thisView.selectorTemplate( selector ) )
                         .data( selector )
                 );
             } );
@@ -286,10 +307,12 @@
     socss.fn.getParsedCss = function(){
         // Load all the parsed CSS
         if( Object.keys(socss.parsedCss).length === 0 ) {
-            var parser = new cssjs();
+            var parser = window.css;
             $('.socss-theme-styles').each(function(){
                 var $$ = $(this);
-                var p = parser.parseCSS( $$.html() );
+                var p = parser.parse( $$.html(), {
+                    silent: true
+                } );
                 socss.parsedCss[ $$.attr('id') ] = p;
             });
         }
@@ -304,19 +327,15 @@
         var parsedCss = socss.fn.getParsedCss();
 
         for( var k in parsedCss ) {
-            for( var i = 0; i < parsedCss[k].length; i++ ) {
-                if (typeof parsedCss[k][i].selector === 'undefined') {
+            var rules = parsedCss[k].stylesheet.rules;
+            for( var i = 0; i < rules.length; i++ ) {
+                if (typeof rules[i].selectors === 'undefined') {
                     continue;
                 }
-
-                var ruleSpecificity = SPECIFICITY.calculate( parsedCss[k][i].selector );
-                for (var j = 0; j < ruleSpecificity.length; j++) {
-                    selectors.push({
-                        'selector': ruleSpecificity[j].selector.trim(),
-                        'specificity': parseInt(ruleSpecificity[j].specificity.replace(/,/g, ''))
-                    });
+    
+                for(var j = 0; j < rules[i].selectors.length; j++) {
+                    selectors = selectors.concat( getSelectorSpecificity( rules[i].selectors[j] ) );
                 }
-
             }
         }
 
@@ -324,14 +343,13 @@
         $('body *').each(function(){
             var $$ = $(this);
             var elName = socss.fn.elSelector( $$ );
-            var ruleSpecificity = SPECIFICITY.calculate( elName );
-            for (var k = 0; k < ruleSpecificity.length; k++) {
-                selectors.push({
-                    'selector': ruleSpecificity[k].selector.trim(),
-                    'specificity': parseInt(ruleSpecificity[k].specificity.replace(/,/g, ''))
-                });
-            }
+            
+            selectors = selectors.concat(getSelectorSpecificity(elName));
         });
+    
+        var $body = $('body');
+        var bName = socss.fn.elSelector($body);
+        selectors = selectors.concat(getSelectorSpecificity(bName, true));
 
         selectors = _.uniq( selectors, false, function( a ){
             return a.selector;
@@ -363,34 +381,56 @@
             return e.split(':').map( trimFunc );
         };
 
-
         var parsedCss = socss.fn.getParsedCss();
 
+        var isAtRule = function (ruleType) {
+            switch(ruleType) {
+                case 'charset':
+                case 'custom-media':
+                case 'document':
+                case 'font-face':
+                case 'host':
+                case 'import':
+                case 'keyframes':
+                case 'keyframe':
+                case 'media':
+                case 'namespace':
+                case 'page':
+                case 'supports':
+                    return true;
+                  
+            }
+            return false;
+        };
+
         for( var k in parsedCss ) {
-            for( var i = 0; i < parsedCss[k].length; i++ ) {
+            var rules = parsedCss[k].stylesheet.rules;
+            for( var i = 0; i < rules.length; i++ ) {
+                var rule = rules[i];
                 if (
-                    typeof parsedCss[k][i].selector === 'undefined' ||
-                    typeof parsedCss[k][i].type !== 'undefined' ||
-                    parsedCss[k][i].selector[0] === '@'
+                    typeof rule.selectors === 'undefined' || isAtRule(rule.type)
                 ) {
                     continue;
                 }
-
-                var ruleSpecificity = SPECIFICITY.calculate( parsedCss[k][i].selector );
-                for (var j = 0; j < ruleSpecificity.length; j++) {
-                    try {
-                        if( el.is( ruleSpecificity[j].selector ) ) {
-                            for( var l = 0; l < parsedCss[k][i].rules.length; l++ ) {
-                                elProperties.push({
-                                    'name' : parsedCss[k][i].rules[l].directive,
-                                    'value' : parsedCss[k][i].rules[l].value,
-                                    'specificity' : parseInt(ruleSpecificity[j].specificity.replace(/,/g, ''))
-                                });
+                
+                for(var j = 0; j < rule.selectors.length; j++) {
+                    var ruleSpecificity = SPECIFICITY.calculate( rule.selectors[j] );
+                    for (var l = 0; l < ruleSpecificity.length; l++) {
+                        try {
+                            if ( el.is( ruleSpecificity[l].selector ) ) {
+                                var declarations = rule.declarations;
+                                for (var l = 0; l < declarations.length; l++) {
+                                    elProperties.push({
+                                        'name': declarations[l].property,
+                                        'value': declarations[l].value,
+                                        'specificity': parseInt( ruleSpecificity[l].specificity.replace( /,/g, '' ) )
+                                    });
+                                }
                             }
                         }
-                    }
-                    catch( e ) {
-                        // For now, we're just going to ignore rules that trigger jQuery errors
+                        catch (e) {
+                            // For now, we're just going to ignore rules that trigger errors
+                        }
                     }
                 }
 
@@ -417,7 +457,7 @@
             elName += '#' + el.attr('id');
         }
         if( el.attr('class') !== undefined ) {
-            elName += '.' + el.attr('class').replace(/\s+/, '.');
+            elName += '.' + el.attr('class').replace(/\s+/g, '.');
         }
 
         if( elName === '' ) {

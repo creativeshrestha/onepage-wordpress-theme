@@ -1,19 +1,22 @@
 === SiteOrigin CSS ===
 Tags: css, design, edit, customize
 Requires at least: 3.9
-Tested up to: 4.4.1
-Stable tag: 1.0.5
-Build time: 2016-02-24T12:18:55+02:00
+Tested up to: 4.9
+Stable tag: 1.1.5
+Build time: 2017-09-19T17:05:02+02:00
 License: GPLv2 or later
 Contributors: gpriday
+Donate link: https://siteorigin.com/downloads/contribution/
+
+SiteOrigin CSS is the simple, yet powerful CSS editor for WordPress. It gives you visual controls that let you edit the look and feel of your site in real-time.
 
 == Description ==
-
-[vimeo https://vimeo.com/129660380]
 
 SiteOrigin CSS is the simple, yet powerful CSS editor for WordPress. It gives you visual controls that let you edit the look and feel of your site in real-time.
 
 We've created a site editing experience that will suit both beginners and advanced users alike. Beginners will love the simple visual controls and real-time preview. Advanced users will love the code autocompletion that makes writing CSS faster than ever.
+
+[vimeo https://vimeo.com/129660380]
 
 = Inspector =
 
@@ -62,18 +65,62 @@ We offer free support on the [SiteOrigin support forums](https://siteorigin.com/
 
 == Changelog ==
 
-= 1.0.6 - 24 February 2016=
+= 1.1.5 - 19 September 2017 =
+* Use `home_url` instead of `site_url` to determine where to open CSS preview.
+* Increment and decrement buttons work when value empty or zero. Also added repeating action while button held down.
+* Scroll editor instead of the whole page so 'Save' button is always visible.
+* Set color CSS on visual editor and inspector.
+* Saving generated CSS to stylesheet file in uploads directory.
+
+= 1.1.4 - 31 January 2017 =
+* Updated CodeMirror to 2.25.2.
+* Removed extra line padding.
+* Better integration with WordPress.org translation.
+
+= 1.1.3 - 31 January 2017 =
+* Removed leading slash in paths after plugin_dir_url().
+* Updated to latest CodeMirror.
+* Fixed padding issue that was causing problems with Firefox and the color picker.
+
+= 1.1.2 - 11 November 2016 =
+* Ignore anything other than actual rules in media query subrules.
+* Removed depreciated jQuery function.
+* Updated CSSLint library.
+* Updated minicolors.
+
+= 1.1.1 - 28 September 2016 =
+* Properly handle errors in frontend CSS.
+* Added notice about SiteOrigin Premium.
+
+= 1.1 - 26 September 2016 =
+* Changed CSS parsing library. Fixed several issues with the visual editor mode.
+* Added address bar to preview window.
+* Small CSS fixes.
+* Small changes to allow adding more visual editor fields.
+
+= 1.0.8 - 15 August 2016 =
+* Fixed action link.
+* Support for GlotPress.
+* Removed unused code.
+* Handling of @imports for future addons.
+
+= 1.0.7 - 4 July 2016 =
+* Ensure user can copy/paste in editor via context menu.
+* Added plugin action links
+* Add classes on `body` element to selectors window.
+
+= 1.0.6 - 24 February 2016 =
 * Disabled autocompletion on single item (automatic autocompletion).
 * Fixed conflict with NextGen Gallery.
 * Only display relevant linting messages.
 
-= 1.0.5 - 21 January 2016=
+= 1.0.5 - 21 January 2016 =
 * Updated to latest version of Code Mirror.
 
-= 1.0.4 - 10 November 2015=
+= 1.0.4 - 10 November 2015 =
 * Fixed CSS parsing when going into visual mode.
 
-= 1.0.3 - 29 October 2015=
+= 1.0.3 - 29 October 2015 =
 * Changed video image
 * Adjust revision times by GMT offset.
 * Don't overwrite media queries sub styles, rather just append them.

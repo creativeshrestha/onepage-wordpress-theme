@@ -20,49 +20,7 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 			array(
 
 			),
-			array(
-
-				'title' => array(
-					'type' => 'text',
-					'label' => __('Title', 'so-widgets-bundle'),
-				),
-
-				'sub_title' => array(
-					'type' => 'text',
-					'label' => __('Subtitle', 'so-widgets-bundle')
-				),
-
-				'design' => array(
-					'type' => 'section',
-					'label' => __('Design', 'so-widgets-bundle'),
-					'fields' => array(
-						'background_color' => array(
-							'type' => 'color',
-							'label' => __('Background color', 'so-widgets-bundle'),
-						),
-						'border_color' => array(
-							'type' => 'color',
-							'label' => __('Border color', 'so-widgets-bundle'),
-						),
-						'button_align' => array(
-							'type' => 'select',
-							'label' => __( 'Button align', 'so-widgets-bundle' ),
-							'default' => 'right',
-							'options' => array(
-								'left' => __( 'Left', 'so-widgets-bundle'),
-								'right' => __( 'Right', 'so-widgets-bundle'),
-							)
-						)
-					)
-				),
-
-				'button' => array(
-					'type' => 'widget',
-					'class' => 'SiteOrigin_Widget_Button_Widget',
-					'label' => __('Button', 'so-widgets-bundle'),
-				),
-
-			),
+			false ,
 			plugin_dir_path(__FILE__)
 		);
 	}
@@ -97,12 +55,58 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 		);
 	}
 
-	function get_template_name($instance) {
-		return 'base';
-	}
+	function get_widget_form(){
+		return array(
 
-	function get_style_name($instance) {
-		return 'basic';
+			'title' => array(
+				'type' => 'text',
+				'label' => __('Title', 'so-widgets-bundle'),
+			),
+
+			'sub_title' => array(
+				'type' => 'text',
+				'label' => __('Subtitle', 'so-widgets-bundle')
+			),
+
+			'design' => array(
+				'type' => 'section',
+				'label' => __('Design', 'so-widgets-bundle'),
+				'fields' => array(
+					'background_color' => array(
+						'type' => 'color',
+						'label' => __('Background color', 'so-widgets-bundle'),
+					),
+					'border_color' => array(
+						'type' => 'color',
+						'label' => __('Border color', 'so-widgets-bundle'),
+					),
+					'title_color' => array(
+						'type' => 'color',
+						'label' => __('Title color', 'so-widgets-bundle'),
+					),
+					'subtitle_color' => array(
+						'type' => 'color',
+						'label' => __('Subtitle color', 'so-widgets-bundle'),
+					),
+					'button_align' => array(
+						'type' => 'select',
+						'label' => __( 'Button align', 'so-widgets-bundle' ),
+						'default' => 'right',
+						'options' => array(
+							'left' => __( 'Left', 'so-widgets-bundle'),
+							'right' => __( 'Right', 'so-widgets-bundle'),
+						)
+					)
+				)
+			),
+
+			'button' => array(
+				'type' => 'widget',
+				'class' => 'SiteOrigin_Widget_Button_Widget',
+				'label' => __('Button', 'so-widgets-bundle'),
+			),
+
+		);
 	}
 
 	function get_less_variables($instance) {
@@ -111,6 +115,8 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 		return array(
 			'border_color' => $instance['design']['border_color'],
 			'background_color' => $instance['design']['background_color'],
+			'title_color'      => $instance['design']['title_color'],
+			'subtitle_color'   => $instance['design']['subtitle_color'],
 			'button_align' => $instance['design']['button_align'],
 		);
 	}
@@ -120,6 +126,14 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 		return $child_widget_form;
 	}
 
+	function get_form_teaser(){
+		if( class_exists( 'SiteOrigin_Premium' ) ) return false;
+		return sprintf(
+			__( 'Get more font customization options with %sSiteOrigin Premium%s', 'so-widgets-bundle' ),
+			'<a href="https://siteorigin.com/downloads/premium/?featured_addon=plugin/cta" target="_blank" rel="noopener noreferrer">',
+			'</a>'
+		);
+	}
 }
 
 siteorigin_widget_register('sow-cta', __FILE__, 'SiteOrigin_Widget_Cta_Widget');

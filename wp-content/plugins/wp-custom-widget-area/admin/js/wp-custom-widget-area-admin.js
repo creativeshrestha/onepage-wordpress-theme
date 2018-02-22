@@ -47,8 +47,8 @@
 			 			//console.log(data);
 						reloadCwaTable();
 						showCwaError(data);
-						
-						resetForm();
+						if(!Array.isArray(data))
+							resetForm();
 					 });	
 		 		//}
 		 	}
@@ -71,6 +71,19 @@
 			var self = this;
 			checkId(self, $(self).val(), 'widget');
 		});
+
+
+		$('#cwa-form #before_after_widget, #cwa-form #before_after_title').on('keyup', function(){
+			var self = this;
+			if(!isJSON($(this).val()) && $(this).val() != ""){
+				$(this).parent().find('.cwa-form-message').html('<label class="cwa-warning" style="position:absolute; top: 40%; max-width: 178px;">Error: Please Enter Valid Json object.</label>');
+			}
+			else{
+				$(this).parent().find('.cwa-form-message').html('');
+			}
+		});
+
+		$('#cwa-form a.fieldSwitcher').on('click', fieldSwitcher);
 		
 		$(document).on('click', '.cwa-edit-link', function(e){
 			e.preventDefault();
@@ -83,11 +96,44 @@
 				$('#cwa-form input[name=task]').val('update');
 				$('#cwa-form input[name=updateid]').val(data['cwa_id']);
 				$('#cwa-form input[name=cwa_id]').prop('disabled', 'disabled');
+
+				var contentElementsArray = ['li','div','span','aside'];
+				var headerElementArray = ['h1','h2','h3','h4','h5','h6'];
 				for (var k in data){
 				    if (typeof data[k] !== 'function') {
 				         //alert("Key is " + k + ", value is" + target[k]);
-				         $('#cwa-form [name='+k+']').val(data[k]);
-				       // console.log($('#cwa-form #'+k));
+				        if(k == "cwa_widget_wrapper"){
+				        	console.log(data[k]);
+				        	if(contentElementsArray.indexOf(data[k]) >= 0){
+				        		$('#cwa-form [name='+k+']').val(data[k]);
+				        		if($('#cwa-form #before_after_widget').siblings('a.fieldSwitcher').text() == "Default"){
+				        			$('#cwa-form #before_after_widget').siblings('a.fieldSwitcher').trigger('click');
+				        		}
+				        	}
+				        	else{
+				        		$('#cwa-form #before_after_widget').val(data[k]);
+				        		if($('#cwa-form #before_after_widget').siblings('a.fieldSwitcher').text() == "Custom"){
+				        			$('#cwa-form #before_after_widget').siblings('a.fieldSwitcher').trigger('click');
+				        		}
+				        	}
+				        }else if(k == "cwa_widget_header_wrapper"){
+				        	if(headerElementArray.indexOf(data[k]) >= 0){
+				        		$('#cwa-form [name='+k+']').val(data[k]);
+				        		if($('#cwa-form #before_after_title').siblings('a.fieldSwitcher').text() == "Default"){
+				        			$('#cwa-form #before_after_title').siblings('a.fieldSwitcher').trigger('click');
+				        		}
+				        	}
+				        	else{
+				        		$('#cwa-form #before_after_title').val(data[k]);
+				        		if($('#cwa-form #before_after_title').siblings('a.fieldSwitcher').text() == "Custom"){
+				        			$('#cwa-form #before_after_title').siblings('a.fieldSwitcher').trigger('click');
+				        		}
+				        	}
+				        }
+				        else{
+				        	$('#cwa-form [name='+k+']').val(data[k]);
+				        }
+				        
 				    }
 				}
 				//console.log(data);
@@ -112,12 +158,13 @@
 			var id = $(this).data('id');
 
 			$.post(ajaxurl,{'action': 'delete_menu', 'data': {'cwa_id': id}}, function(data){ 
-				console.log(data);
+				//console.log(data);
 				showCwaError(data);
 				
 				reloadMenuTable();
 			 });
 		});
+
 
 
 		$('#cwa-advance-btn').on('click', function(e){
@@ -170,7 +217,7 @@
 		});
 
 		$('#cwa-menu-form input[name=cwa_id]').on('keyup', function(){
-			console.log("hey");
+			//console.log("hey");
 			var self = this;
 			checkId(self, $(self).val(), 'menu');
 		});
@@ -188,11 +235,11 @@
 		$('#tab-container').easytabs();
 
 		runTooltip();
-		 
+		enableTextareaTab();
 	 });
 
 	function validateForm(arr){
-		window.xt = arr;
+		//window.xt = arr;
 		return true;
 	}
 	function checkId(self, cwa_id, type){
@@ -205,7 +252,7 @@
 					$(self).next('.cwa-form-message').html("<label class='cwa-success' style='padding-left: 5px;'>"+data.message+"</label>");
 				}
 
-				console.log(data);
+				//console.log(data);
 			 });
 	};
 	function reloadCwaTable(){
@@ -225,20 +272,30 @@
 			 });
 	}
 	function showCwaError(obj){
-
-		var type = (obj.code === 0)? "cwa-warning" : "cwa-success" ;
-		//console.log(obj.code === 0);
-		var message = obj.message;
+		if(Array.isArray(obj)){
+			var message = '';
+			for(var i = 0; i<obj.length; i++){
+				var type = (obj[i].code === 0)? "cwa-warning" : "cwa-success" ;
+				message += obj[i].message + "<br>";
+			}
+		}else{
+			var type = (obj.code === 0)? "cwa-warning" : "cwa-success" ;
+			//console.log(obj.code === 0);
+			var message = obj.message;
+			
+		}
 		$('.cwa-error').html(message).addClass(type).fadeIn();
-		setTimeout(function(){
-			$('.cwa-error').fadeOut().html("").removeClass(type);
-		}, 5000);
+			setTimeout(function(){
+				$('.cwa-error').fadeOut().html("").removeClass(type);
+			}, 5000);
+		
 	}
 	function resetForm(){
 		$('.cwa-form input[type="hidden"]' ).val('');
 		$('.cwa-form input[disabled]' ).prop('disabled', false);
-		$('.cwa-form select' ).val('');
+		$('.cwa-form select' ).children(':first-child').prop('selected', true);
 		$('.cwa-form input[type="text"]' ).val('');
+		$('.cwa-form textarea' ).val('');
 		$('.cwa-form input[type="submit"]' ).val('Create');
 		$('.cwa-form  .cwa-form-message' ).empty();
 
@@ -253,5 +310,48 @@
 			   	trigger: 'click'
 		 });
 	}
+	function enableTextareaTab(){
+		$(document).delegate('.cwa-form-row textarea', 'keydown', function(e) {
+		  var keyCode = e.keyCode || e.which;
 
+		  if (keyCode == 9) {
+		    e.preventDefault();
+		    var start = $(this).get(0).selectionStart;
+		    var end = $(this).get(0).selectionEnd;
+
+		    // set textarea value to: text before caret + tab + text after caret
+		    $(this).val($(this).val().substring(0, start)
+		                + "\t"
+		                + $(this).val().substring(end));
+
+		    // put caret at right position again
+		    $(this).get(0).selectionStart =
+		    $(this).get(0).selectionEnd = start + 1;
+		  }
+		});
+	}
+	function fieldSwitcher(){
+		if($(this).parent().find('textarea').hasClass('hidden')){
+			$(this).text("Default");
+			$(this).parent().find('.tg').val('custom');
+
+			//console.log($(this).parent().find('.tg').val());
+		}else{
+			$(this).text("Custom");
+			$(this).parent().find('.tg').val('');
+		}
+		$(this).parent().find('select').toggleClass('hidden');
+		$(this).parent().find('textarea').toggleClass('hidden');
+		
+	}
+
+	function isJSON(data) {
+	   var ret = true;
+	   try {
+	      JSON.parse(data);
+	   }catch(e) {
+	      ret = false;
+	   }
+	   return ret;
+	}
 })( jQuery );

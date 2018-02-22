@@ -3,8 +3,8 @@ Contributors: Archetyped
 Donate link: http://gum.co/slb-donate
 License: GPLv2
 Tags: lightbox, gallery, photography, images, theme, template, style
-Requires at least: 4.3
-Tested up to: 4.4
+Requires at least: 4.7
+Tested up to: 4.8
 Stable tag: trunk
 
 The highly customizable lightbox for WordPress
@@ -56,6 +56,17 @@ Get more information on [Simple Lightbox's official page](http://archetyped.com/
 3. Dark Theme
 
 == Changelog ==
+
+= 2.6.0 =
+
+* Add: Activate links in native WordPress navigation menus (enable in admin settings)
+* Add: Group menu links separately (enable in admin settings)
+* Optimize: Fallback lightbox title text retrieval (link text)
+* Fix: Undefined variable in `Utilities::get_plugin_base_file()` (The Lost Temple of Xavivars)
+
+= 2.5.3 =
+
+* Optimize: Entity handling in URIs for different server environments
 
 = 2.5.2 =
 
@@ -220,7 +231,7 @@ Get more information on [Simple Lightbox's official page](http://archetyped.com/
 * Fix: YouTube embed using iFrame overlaps lightbox (Elena in Hiding)
 * Fix: Issue when scanning links without valid URLs (McCloskey Iteration)
 * Fix: Image activation is case-sensitive (Sensitive Tanya)
-* Fix: Visible lightbox overlay edges when image larger than browser window (Chibi Overlay) 
+* Fix: Visible lightbox overlay edges when image larger than browser window (Chibi Overlay)
 * Fix: Options availability for some users
 * Fix: Inconsistent loading of image metadata
 * Fix: Links not fully processed when group is set manually

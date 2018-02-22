@@ -1,4 +1,11 @@
-<?php $snippets = SiteOrigin_CSS::single()->get_snippets(); ?>
+<?php
+/**
+ * @var $custom_css_revisions array Saved revisions for the current theme.
+ */
+
+$snippets = SiteOrigin_CSS::single()->get_snippets();
+$user = wp_get_current_user();
+?>
 
 <div class="wrap" id="siteorigin-custom-css">
 	<h2>
@@ -17,14 +24,10 @@
 		</div>
 	<?php endif; ?>
 
-
 	<div id="poststuff">
 		<div id="so-custom-css-info">
 
-			<?php
-			$user = wp_get_current_user();
-			if( !get_user_meta( $user->ID, 'socss_hide_gs' ) ) {
-				?>
+			<?php if( !get_user_meta( $user->ID, 'socss_hide_gs' ) ) : ?>
 				<div class="postbox" id="so-custom-css-getting-started">
 					<h3 class="hndle">
 						<span><?php _e('Getting Started Video', 'so-css') ?></span>
@@ -34,21 +37,25 @@
 						<a href="https://siteorigin.com/css/getting-started/" target="_blank"><img src="<?php echo plugin_dir_url(__FILE__).'../css/images/video.jpg' ?>" /></a>
 					</div>
 				</div>
-				<?php
-			}
-			?>
+			<?php endif; ?>
 
 			<div class="postbox" id="so-custom-css-revisions">
 				<h3 class="hndle"><span><?php _e('CSS Revisions', 'so-css') ?></span></h3>
 				<div class="inside">
 					<ol data-confirm="<?php esc_attr_e('Are you sure you want to load this revision?', 'so-css') ?>">
 						<?php
-						if( is_array($custom_css_revisions) ) {
-							foreach($custom_css_revisions as $time => $css) {
+						if ( is_array( $custom_css_revisions ) ) {
+							$is_current = true;
+							foreach ( $custom_css_revisions as $time => $css ) {
 								?>
 								<li>
-									<a href="<?php echo add_query_arg(array('theme' => $theme, 'time' => $time)) ?>" class="load-css-revision"><?php echo date('j F Y @ H:i:s', $time + get_option('gmt_offset') * 60 * 60) ?></a>
-									(<?php printf(__('%d chars', 'so-css'), strlen($css)) ?>)
+									<?php if ( $is_current ) : ?>
+										<?php echo date('j F Y @ H:i:s', $time + get_option('gmt_offset') * 60 * 60) ?> (Current)
+										<?php $is_current = false; ?>
+									<?php else : ?>
+										<a href="<?php echo esc_url( add_query_arg( array( 'theme' => $theme, 'time' => $time ) ) ) ?>" class="load-css-revision"><?php echo date('j F Y @ H:i:s', $time + get_option('gmt_offset') * 60 * 60) ?></a>
+										(<?php printf(__('%d chars', 'so-css'), strlen($css)) ?>)
+									<?php endif; ?>
 								</li>
 								<?php
 							}

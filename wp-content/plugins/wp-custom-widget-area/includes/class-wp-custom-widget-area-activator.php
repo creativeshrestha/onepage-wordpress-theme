@@ -31,9 +31,8 @@ class Custom_Widget_Area_Activator {
 	 */
 	public static function activate() {
 
-		global $wpdb;
-		$kz_db_version = '1.1.5';
-		$table_name = $wpdb->prefix . 'cwa';
+		global $wpdb, $kz_db_version, $table_name;
+		
 		$charset_collate = '';
 
 		if ( ! empty( $wpdb->charset ) ) {
@@ -50,9 +49,9 @@ class Custom_Widget_Area_Activator {
 			cwa_description text NOT NULL,
 			cwa_id varchar(100) NOT NULL ,
 			cwa_widget_class text ,
-			cwa_widget_wrapper varchar(25),
+			cwa_widget_wrapper text,
 			cwa_widget_header_class text,
-			cwa_widget_header_wrapper varchar(25),
+			cwa_widget_header_wrapper text,
 			cwa_type varchar(10),
 			last_updated date NOT NULL,
 			UNIQUE KEY id (id)

@@ -56,6 +56,7 @@ class CWA_view
 		<div class="cwa-error" style="display:none;">
 			
 		</div>
+		
 		<div id="cwa-table-wrap">
 		<?php
 			self::widgetTable();
@@ -93,6 +94,10 @@ class CWA_view
 						<option value="aside">aside</option>
 						<option value="span">span</option>
 					</select>
+					<textarea id="before_after_widget" name="before_after_widget" placeholder="Before/ After widget" title='i.e. <br>[{ <br> &nbsp;&nbsp; "tag": "div", <br> &nbsp;&nbsp; "id": "widget-outer", <br> &nbsp;&nbsp; "class": "widget-outer", <br> &nbsp;&nbsp; "data-tag": "outer" <br> }, <br>	{ <br> &nbsp;&nbsp;	 "tag": "div", <br> &nbsp;&nbsp; "class": "widget-inner", <br> &nbsp;&nbsp; ... <br>}, <br> ...'] class="tooltip hidden" style="min-height: 150px;" ></textarea>
+					<input id="widget_wrapper_tg" class="tg" name="widget_wrapper_tg" type="hidden">
+
+					<a class="fieldSwitcher">Custom</a>
 					<span class="cwa-form-message"></span>
 				</div>
 				<div class="cwa-form-row">
@@ -108,7 +113,11 @@ class CWA_view
 						<option value="h5">h5</option>
 						<option value="h6">h6</option>
 					</select>
+					<textarea id="before_after_title" name="before_after_title" placeholder="Before/ After widget" title='i.e. <br>[{ <br> &nbsp;&nbsp; "tag": "div", <br> &nbsp;&nbsp; "id": "widget-outer", <br> &nbsp;&nbsp; "class": "widget-outer", <br> &nbsp;&nbsp; "data-tag": "outer" <br> }, <br>	{ <br> &nbsp;&nbsp;	 "tag": "div", <br> &nbsp;&nbsp; "class": "widget-inner", <br> &nbsp;&nbsp; ... <br>}, <br> ...]' class="tooltip hidden" style="min-height: 150px;" ></textarea>
+					<input id="widget_header_wrapper_tg" name="widget_header_wrapper_tg" class="tg" type="hidden">
+					<a class="fieldSwitcher">Custom</a>
 					<span class="cwa-form-message"></span>
+
 				</div>
 				
 			</div>
@@ -175,8 +184,8 @@ class CWA_view
 	}
 
 	public function getWidgetData(){
-		global $wpdb, $table_name;
-
+		global $wpdb;
+		$table_name = TABLE_NAME;
 		$sql = "SELECT * FROM $table_name WHERE cwa_type='widget'";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
