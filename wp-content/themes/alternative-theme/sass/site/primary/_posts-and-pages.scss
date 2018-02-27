@@ -546,6 +546,7 @@ transition: 0.5s ease;
 .approch{
 	// lost-waffle: 1/3 4 25px;
 	z-index: 99;
+	text-align: center;
 
 	@media screen and (max-width: 768px){
 		// lost-cycle:none;
@@ -555,6 +556,12 @@ transition: 0.5s ease;
 	@media screen and (max-width: 480px){
 		// lost-cycle:none;
 		// lost-waffle: 2/2 0 0;
+	}
+	h1{
+		margin-bottom: 0;
+	}
+	p{
+		margin: 0;
 	}
 }
 

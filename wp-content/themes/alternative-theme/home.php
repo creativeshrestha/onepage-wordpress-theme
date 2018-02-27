@@ -5,7 +5,6 @@
 
 get_header(); ?>
 
-
 <div id="primary" class="content-area">
 	<main id="main" class="site-main" role="main">
 
@@ -13,11 +12,9 @@ get_header(); ?>
 
 			<div class="section" id="section0">
 				<div class="container">
-
-						<div class="heading-title" data-0="transform: translateY(-5%);" data-end="transform: translateY(700px);">
-								<h1>I'm UX UI Designer expertise in Designing, Animation, User Interface, App Design, Mobile App Design, Visualisation, Infographic Design, HTML5, CSS, and WordPress</h1>
-						</div>
-
+					<div class="heading-title" data-0="transform: translateY(-5%);" data-end="transform: translateY(700px);">
+						<h1>I'm UX UI Designer expertise in Designing, Animation, User Interface, App Design, Mobile App Design, Visualisation, Infographic Design, HTML5, CSS, and WordPress</h1>
+					</div>
 				</div>
 			</div> <!--/section0 -->
 
@@ -59,48 +56,56 @@ get_header(); ?>
 							'posts_per_page' => 7
 						));
 					?>
+					<div class="row">
+						<?php while ($my_work->have_posts()) : $my_work->the_post(); ?>
+						
+							<div class="col-4 no-gutters">
+								<div class="work">
+									<?php echo the_post_thumbnail('category-thumb'); ?>
 
-					<?php while ($my_work->have_posts()) : $my_work->the_post(); ?>
-						<div class="work">
-						<?php echo the_post_thumbnail('category-thumb'); ?>
-
-						 <?php //dynamic_sidebar( 'custombanner' ); ?>
-						 </div>
-					 <?php endwhile; ?>
-
-				<div class="work">
+									<?php //dynamic_sidebar( 'custombanner' ); ?>
+								</div>
+							</div>
+						
+							
+						<?php endwhile; ?>
+					</div>
+					<?php /*<div class="work">
 						<a href="<?php bloginfo('url') ?>/work"><img src="<?php bloginfo('template_url'); ?>/img/work1.jpg" alt="" /></a>
-				</div>
+					</div>
+					*/ ?>
 
 			</div>
 		</div> <!--/section0 -->
 
-		<?php /*
+		
 
-		<div class="section3" id="section3">
+		<div class="section2" id="section3">
 			<div class="container">
-					<h2>approch <span>how we do it</span></h2>
+					<!-- <h2>approch <span>how we do it</span></h2> -->
 
 					<?php
 						$my_approch = new WP_Query(array(
 							'post_type' => 'approch',
-							'posts_per_page' => 3
+							'posts_per_page' => 4
 						));
 					?>
-
-					<?php while ($my_approch->have_posts()) : $my_approch->the_post(); ?>
-						<div class="approch">
-						<?php echo the_post_thumbnail('category-thumb'); ?>
-						 <h1><?php echo the_title(); ?></h1>
-						 <p> <?php echo the_content('description'); ?> </p>
-
-						 <?php //dynamic_sidebar( 'custombanner' ); ?>
-						 </div>
-					 <?php endwhile; ?>
-
+					<div class="row">
+						<?php while ($my_approch->have_posts()) : $my_approch->the_post(); ?>
+							<div class="col-3">
+								<div class="approch">
+									<?php echo the_post_thumbnail('category-thumb'); ?>
+										<h1><?php echo the_title(); ?></h1>
+										<p> <?php echo the_content('description'); ?> </p>
+									<?php //dynamic_sidebar( 'custombanner' ); ?>
+								</div>
+							</div>
+						<?php endwhile; ?>
+					 </div>
 
 			</div>
 		</div> <!--/section0 -->
+		<?php /*
 
 		<div class="section4" id="section2">
 			<div class="container">
@@ -135,7 +140,7 @@ get_header(); ?>
 		</div> <!--/section0 -->
 		*/ ?>
 
-		<div id="section5" class="section">
+		<div id="section4" class="section">
 			<div class="container" class="section">
 					<h2>Blog <span>write-up about</span></h2>
 
@@ -164,12 +169,6 @@ get_header(); ?>
 
 						<div class="contact-wrapper">
 							<div class="container">
-									<div class="address">
-											
-											Dubai, United Arabi Emirates <br><br>
-											phone +971 527073043 <br><br>
-											niteshoncode@gmail.com
-									</div>
 									<div class="contact-footer">
 										<?php echo do_shortcode('[contact-form-7 id="97" title="footer-contact"]') ?>
 									</div>

@@ -2260,7 +2260,12 @@ body {
     width: 100%; }
 
 .approch {
-  z-index: 99; }
+  z-index: 99;
+  text-align: center; }
+  .approch h1 {
+    margin-bottom: 0; }
+  .approch p {
+    margin: 0; }
 
 .next-section {
   clear: both;
