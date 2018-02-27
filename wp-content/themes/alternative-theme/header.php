@@ -28,26 +28,29 @@
 
 	<header id="masthead" class="site-header" role="banner">
 		<div class="container">
+		<div class="row">
+			<div class="col-10">
 
-		<div class="site-branding">
-			<?php
-			if ( is_front_page() && is_home() ) : ?>
-			<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-			<?php else : ?>
-				<div class="brand-name">
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img src="<?php bloginfo('template_url'); ?>/img/logo.png" alt="<?php bloginfo('name'); ?>" /></a>
-				</div>
-			<?php endif; ?>
-		</div><!-- .site-branding -->
-		<?php /*
-		<nav id="site-navigation" class="main-navigation" role="navigation">
-			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'alternative-theme' ); ?></button>
-			/*
-		</nav> #site-navigation
+				<div class="site-branding">	
+					<?php
+						if ( is_front_page() && is_home() ) : ?>
+						<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
+						<?php else : ?>
+							<div class="brand-name">
+								<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><img src="<?php bloginfo('template_url'); ?>/img/logo.png" alt="<?php bloginfo('name'); ?>" /></a>
+							</div>
+						<?php endif; ?>
+				</div><!-- .site-branding -->
+			</div>
+			<?php /*
+			<nav id="site-navigation" class="main-navigation" role="navigation">
+				<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'alternative-theme' ); ?></button>
+				/*
+			</nav> #site-navigation
 
-		 //get_search_form(); */ ?>
-
-		<div class="navigation">
+			//get_search_form(); */ ?>
+			<div class="col-2">
+			<div class="navigation">
 				<div class="mobilenav">
 					<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
 				</div>
@@ -61,6 +64,8 @@
 				</a>
 				</div>
 			</div>
+			</div>
+		</div>
 
 	</header><!-- #masthead -->
 

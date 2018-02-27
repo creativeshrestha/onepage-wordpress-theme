@@ -25,7 +25,7 @@ get_header(); ?>
 
 		<div id="section1" class="section">
 			<div class="container">
-					<h2>about <span>know more about us</span></h2>
+					<h2>about <span>know more about me</span></h2>
 
 					<?php
 						$my_about = new WP_Query(array(
@@ -46,6 +46,8 @@ get_header(); ?>
 
 			</div>
 		</div> <!--/section0 -->
+
+		
 
 		<div class="section2" id="section2">
 			<div class="container">
@@ -72,6 +74,8 @@ get_header(); ?>
 
 			</div>
 		</div> <!--/section0 -->
+
+		<?php /*
 
 		<div class="section3" id="section3">
 			<div class="container">
@@ -129,6 +133,7 @@ get_header(); ?>
 
 			</div>
 		</div> <!--/section0 -->
+		*/ ?>
 
 		<div id="section5" class="section">
 			<div class="container" class="section">
@@ -144,7 +149,7 @@ get_header(); ?>
 						</div>
 					<?php endwhile; ?>
 					<div class="next-section">
-						<a href="#" class="cta">next</a>
+						<a href="#" class="cta">View all</a>
 					</div>
 
 
@@ -160,13 +165,10 @@ get_header(); ?>
 						<div class="contact-wrapper">
 							<div class="container">
 									<div class="address">
-											m03, al shraifi centre, zabeel road <br>
-											p.o. box 34263 <br>
-											dubai, uae <br><br>
-
-											phone +971 4 396 4141 <br><br>
-
-											for job opportunities <a href="http://mbr-me.com">click here</a>
+											
+											Dubai, United Arabi Emirates <br><br>
+											phone +971 527073043 <br><br>
+											niteshoncode@gmail.com
 									</div>
 									<div class="contact-footer">
 										<?php echo do_shortcode('[contact-form-7 id="97" title="footer-contact"]') ?>

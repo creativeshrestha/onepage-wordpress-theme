@@ -116,7 +116,7 @@ add_action( 'widgets_init', 'alternative_theme_widgets_init' );
 function alternative_theme_scripts() {
 
 	//styles imported
-	wp_enqueue_style( 'owl-carousel-materialize', get_stylesheet_directory_uri() . '/bower_components/Materialize/dist/css/materialize.css');
+	// wp_enqueue_style( 'owl-carousel-materialize', get_stylesheet_directory_uri() . '/bower_components/Materialize/dist/css/materialize.css');
 	wp_enqueue_style( 'owl-carousel-styles', get_stylesheet_directory_uri() . '/plugins/css/owl.carousel.css');
 	wp_enqueue_style( 'owl-theme-styles', get_stylesheet_directory_uri() . '/plugins/css/owl.theme.css');
 	wp_enqueue_style( 'alternative-theme-fullPage', get_stylesheet_directory_uri() . '/plugins/fullPage/jquery.fullPage.css');
